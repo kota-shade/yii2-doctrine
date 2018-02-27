@@ -1,13 +1,17 @@
 {
-    "name": "svp/yii2-doctrine",
+    "name": "kota-shade/yii2-doctrine",
     "description": "Yii 2 extension wrapper to communicate with Doctrine 2.",
     "keywords": ["yii","doctrine"],
-    "homepage": "https://github.com/Seldaek/monolog",
+    "homepage": "",
     "type": "yii-extension",
     "authors": [
         {
-            "name": "Vitaliy Skvortsov",
+            "name": "base version from Vitaliy Skvortsov",
             "email": "skvor_vit@mail.ru"
+        },
+        {
+            "name": "Andrey Kotrekhov",
+            "email": "kota.shade@gmail.com"
         }
     ],
     "require": {
@@ -16,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "yii\\doctrine\\": ""
+            "KotaShade\\doctrine\\": "src/"
         }
     }
 }
