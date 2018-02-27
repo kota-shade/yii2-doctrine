@@ -18,12 +18,6 @@ class DoctrineComponent extends Component
     private $basePath;
     private $proxyPath;
     private $entityPath;
-//    private $driver;
-//    private $user;
-//    private $password;
-//    private $host;
-//    private $dbname;
-
     private $dbParams=[];
     private $cache=[];
 
@@ -57,13 +51,16 @@ class DoctrineComponent extends Component
             $cacheObj = $cacheFactory($this->cache['driver'], $cacheParams);
         }
 
+        $proxyPath = \Yii::getAlias($this->getProxyPath());
+
         $config = Setup::createAnnotationMetadataConfiguration(
             $this->entityPath,
             $this->getIsDev(),
-            $this->getProxyPath(),
+            $proxyPath,
             $cacheObj,
             false
         );
+        //TODO the L2 cache
         //$config->setSecondLevelCacheEnabled(true);
 
         $entityManager = EntityManager::create($this->dbParams, $config);
