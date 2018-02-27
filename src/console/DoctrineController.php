@@ -1,6 +1,6 @@
 <?php
 
-namespace yii\doctrine\console;
+namespace KotaShade\doctrine\console;
 
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use yii\console\Controller;

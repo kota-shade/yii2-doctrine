@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use yii\base\Component;
 use yii\console\Exception;
+use KotaShade\doctrine\models as ModelNS;
 
 class DoctrineComponent extends Component
 {
@@ -24,6 +25,7 @@ class DoctrineComponent extends Component
 //    private $dbname;
 
     private $dbParams=[];
+    private $cache=[];
 
     public function __construct($config = [])
     {
@@ -48,7 +50,22 @@ class DoctrineComponent extends Component
     {
         \Yii::setAlias('Doctrine', \Yii::getAlias('@app/vendor/Doctrine'));
 
-        $config = Setup::createAnnotationMetadataConfiguration($this->entityPath, $this->getIsDev(), null, null, false);
+        $cacheObj = null;
+        if (isset($this->cache['driver'])) {
+            $cacheFactory = new ModelNS\CacheFactory();
+            $cacheParams = (isset($this->cache['options'])) ? $this->cache['options'] : [];
+            $cacheObj = $cacheFactory($this->cache['driver'], $cacheParams);
+        }
+
+        $config = Setup::createAnnotationMetadataConfiguration(
+            $this->entityPath,
+            $this->getIsDev(),
+            $this->getProxyPath(),
+            $cacheObj,
+            false
+        );
+        //$config->setSecondLevelCacheEnabled(true);
+
         $entityManager = EntityManager::create($this->dbParams, $config);
         $this->setEntityManager($entityManager);
     }
@@ -140,5 +157,23 @@ class DoctrineComponent extends Component
 
     public function getDbParam($name) {
         return (array_key_exists($name, $this->dbParams)) ? $this->dbParams[$name] : null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCache()
+    {
+        return $this->cache;
+    }
+
+    /**
+     * @param array $cache
+     * @return self
+     */
+    public function setCache(array $cache)
+    {
+        $this->cache = $cache;
+        return $this;
     }
 }
