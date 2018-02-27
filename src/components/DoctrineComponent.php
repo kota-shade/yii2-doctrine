@@ -1,24 +1,29 @@
 <?php
 
-namespace yii\doctrine\components;
+namespace KotaShade\doctrine\components;
 
 use Doctrine\ORM\EntityManager;
-use \Doctrine\ORM\Tools\Setup;
+use Doctrine\ORM\Tools\Setup;
 use yii\base\Component;
 use yii\console\Exception;
 
 class DoctrineComponent extends Component
 {
+    /**
+     * @var EntityManager
+     */
     private $em    = null;
     private $isDev = false;
     private $basePath;
     private $proxyPath;
     private $entityPath;
-    private $driver;
-    private $user;
-    private $password;
-    private $host;
-    private $dbname;
+//    private $driver;
+//    private $user;
+//    private $password;
+//    private $host;
+//    private $dbname;
+
+    private $dbParams=[];
 
     public function __construct($config = [])
     {
@@ -43,28 +48,45 @@ class DoctrineComponent extends Component
     {
         \Yii::setAlias('Doctrine', \Yii::getAlias('@app/vendor/Doctrine'));
 
-        $conn = [
-            'driver'   => $this->getDriver(),
-            'user'     => $this->getUser(),
-            'password' => $this->getPassword(),
-            'host'     => $this->getHost(),
-            'dbname'   => $this->getDbname()
-        ];
-
-
         $config = Setup::createAnnotationMetadataConfiguration($this->entityPath, $this->getIsDev(), null, null, false);
-        $entityManager = EntityManager::create($conn, $config);
+        $entityManager = EntityManager::create($this->dbParams, $config);
         $this->setEntityManager($entityManager);
     }
 
+    /**
+     * @return array
+     */
+    public function getDbParams()
+    {
+        return $this->dbParams;
+    }
+
+    /**
+     * @param array $dbParams
+     * @return $this
+     */
+    public function setDbParams(array $dbParams)
+    {
+        $this->dbParams = $dbParams;
+        return $this;
+    }
+
+    /**
+     * @return EntityManager
+     */
     public function getEntityManager()
     {
         return $this->em;
     }
 
+    /**
+     * @param EntityManager $entityManager
+     * @return self
+     */
     public function setEntityManager($entityManager)
     {
         $this->em = $entityManager;
+        return $this;
     }
 
     public function getIsDev()
@@ -111,54 +133,12 @@ class DoctrineComponent extends Component
         return $this->entityPath;
     }
 
-    public function setDriver($driver)
+    public function setDbParam($name, $value)
     {
-        $this->driver = $driver;
+        $this->dbParams[$name] = $value;
     }
 
-    public function getDriver()
-    {
-        return $this->driver;
+    public function getDbParam($name) {
+        return (array_key_exists($name, $this->dbParams)) ? $this->dbParams[$name] : null;
     }
-
-    public function setUser($user)
-    {
-        $this->user = $user;
-    }
-
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    }
-
-    public function setHost($host)
-    {
-        $this->host = $host;
-    }
-
-    public function getHost()
-    {
-        return $this->host;
-    }
-
-    public function setDbname($dbname)
-    {
-        $this->dbname = $dbname;
-    }
-
-    public function getDbname()
-    {
-        return $this->dbname;
-    }
-
 }
