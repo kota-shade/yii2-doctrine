@@ -4,10 +4,23 @@ namespace KotaShade\doctrine\console;
 
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use yii\console\Controller;
+use Yii;
+use KotaShade\doctrine\components\DoctrineComponent;
+use yii\base\Module;
 
 class DoctrineController extends Controller
 {
     public $option;
+
+    public function __construct(string $id, Module $module, array $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        /** @var DoctrineComponent $doctrine */
+        $doctrine = Yii::$app->get('doctrine');
+        $em = $doctrine->getEntityManager();
+        $platform = $em->getConnection()->getDatabasePlatform();
+        $platform->registerDoctrineTypeMapping('enum', 'string');
+    }
 
     public function actionIndex()
     {
